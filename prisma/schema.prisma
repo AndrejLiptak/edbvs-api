@@ -1,0 +1,139 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator pothos {
+  provider = "prisma-pothos-types"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model GenericDevice {
+  id String @id
+  name String
+  slots Int
+  inputs Int
+  outputs Int
+  powerLoss Float
+  maxTemp Float
+  isVerified Boolean @default(false)
+  link String?
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email])
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  name String
+  isVerified Boolean
+  isCopmany Boolean @default(false)
+  companyName String?
+  companyICO Int?
+  genericDevices GenericDevice[]
+  circuitBreakers CircuitBreaker[]
+  enclosures Enclosure[]
+  rcds RCD[]
+  surgeProtectors SurgeProtector[]
+  plcs PLC[]
+  companyRequest CompanyRequest?
+}
+
+model CompanyRequest {
+  userEmail String @id
+  user User @relation(fields: [userEmail], references: [email])
+  approved Boolean @default(false)
+  rejected Boolean @default(false)
+  companyName String 
+  companyICO Int 
+
+}
+
+model CircuitBreaker {
+  id String @id
+  name String
+  poleCount String
+  type String
+  ratedCurrent Int
+  slots Int
+  inputs Int
+  outputs Int
+  powerLoss Float
+  maxTemp Float
+  isVerified Boolean @default(false)
+  link String?
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email])
+}
+
+model RCD {
+  id String @id
+  name String
+  poleCount String
+  ratedCurrent Int
+  ratedResidualCurrent Float
+  breakTimeType String
+  currentType String
+  slots Int
+  inputs Int
+  outputs Int
+  powerLoss Float
+  maxTemp Float
+  isVerified Boolean @default(false)
+  link String?
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email])
+}
+
+model SurgeProtector {
+  id String @id
+  name String
+  type String
+  slots Int
+  inputs Int
+  outputs Int
+  powerLoss Float
+  maxTemp Float
+  isVerified Boolean @default(false)
+  link String?
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email])
+}
+
+model PLC {
+  id String @id
+  name String
+  slots Int
+  inputs Int
+  outputs Int
+  digitalIn Int
+  digitalOut Int
+  analogIn Int
+  analogOut Int
+  powerLoss Float
+  maxTemp Float
+  isVerified Boolean @default(false)
+  link String?
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email])
+}
+
+
+model Enclosure {
+  id String @id
+  name String
+  heatDissipation Float
+  totalSlots Int
+  totalDIN Int
+  oneDINSlots Int
+  isVerified Boolean @default(false)
+  link String?
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email])
+}
